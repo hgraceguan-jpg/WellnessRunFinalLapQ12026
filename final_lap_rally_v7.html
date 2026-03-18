@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Lap Virtual Rally — Strava Wellness Run 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #6B2D7B; --secondary: #E63946; --accent: #FFD23F;
+    --darker: #1A0A1F; --card-bg: rgba(107,45,123,0.15);
+    --text-primary: #FFFFFF; --text-secondary: rgba(255,255,255,0.7);
+    --finished: #00D4AA; --pending: #FF8C42;
+    --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Outfit',sans-serif;background:var(--darker);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
+  .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden}
+  .bg-animation::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 20% 80%,rgba(107,45,123,.25) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(230,57,70,.15) 0%,transparent 50%),radial-gradient(circle at 50% 50%,rgba(255,210,63,.08) 0%,transparent 50%);animation:bgPulse 15s ease-in-out infinite}
+  @keyframes bgPulse{0%,100%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(-2%,2%) rotate(1deg)}66%{transform:translate(2%,-2%) rotate(-1deg)}}
+  .grid-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:50px 50px;z-index:1;pointer-events:none}
+  .container{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:40px 20px}
+
+  /* HEADER */
+  .header{text-align:center;margin-bottom:36px;animation:fadeInDown .8s ease-out}
+  @keyframes fadeInDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+  .header-badge{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--secondary));padding:8px 24px;border-radius:50px;font-size:.85rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+  .header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,5.5rem);letter-spacing:4px;line-height:.95;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.85) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .header h1 span{background:linear-gradient(135deg,var(--secondary),var(--accent));-webkit-background-clip:text;background-clip:text}
+  .header p{font-size:1rem;color:var(--text-secondary);font-weight:300}
+
+  /* HERO STATS */
+  .hero-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
+  .hero-stat{background:var(--card-bg);backdrop-filter:blur(10px);border:1px solid rgba(107,45,123,.3);border-radius:16px;padding:16px 12px;text-align:center;position:relative;overflow:hidden}
+  .hero-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--secondary),var(--accent))}
+  .hero-stat-value{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;background:linear-gradient(135deg,var(--secondary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-stat-label{font-size:.7rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+  /* BONUS BANNER */
+  .bonus-banner{position:relative;background:linear-gradient(135deg,rgba(255,210,63,.12) 0%,rgba(230,57,70,.1) 50%,rgba(107,45,123,.15) 100%);border:1.5px solid rgba(255,210,63,.45);border-radius:20px;padding:28px 32px;overflow:hidden;margin-bottom:36px;animation:bonusPulse 3s ease-in-out infinite}
+  @keyframes bonusPulse{0%,100%{border-color:rgba(255,210,63,.45)}50%{border-color:rgba(255,210,63,.9)}}
+  .bonus-banner::before{content:'';position:absolute;top:-60%;right:-5%;width:300px;height:300px;background:radial-gradient(circle,rgba(255,210,63,.1) 0%,transparent 70%);pointer-events:none}
+  .bonus-banner::after{content:'⭐';position:absolute;right:28px;top:50%;transform:translateY(-50%);font-size:5rem;opacity:.07}
+  .bonus-tag{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--secondary),var(--accent));color:#fff;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 16px;border-radius:20px;margin-bottom:12px}
+  .bonus-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.2rem);letter-spacing:3px;color:var(--accent);line-height:1;margin-bottom:6px}
+  .bonus-subtitle{font-size:.95rem;color:var(--text-secondary);margin-bottom:22px;font-weight:300}
+  .bonus-rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .bonus-rule{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+  .bonus-rule-icon{font-size:1.4rem;flex-shrink:0;margin-top:1px}
+  .bonus-rule h4{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .bonus-rule p{font-size:.8rem;color:var(--text-secondary);line-height:1.5}
+  .bonus-rule p strong{color:var(--text-primary);font-weight:600}
+  .rule-target h4{color:var(--accent)}
+  .rule-move h4{color:#B388FF}
+  .rule-gift h4{color:var(--finished)}
+  .rule-forfeit{border-color:rgba(230,57,70,.35)!important;background:rgba(230,57,70,.08)!important}
+  .rule-forfeit h4{color:var(--secondary)}
+
+  /* SECTION HEADER */
+  .section-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+  .section-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px}
+  .section-header .line{flex:1;height:1px;background:rgba(107,45,123,.4)}
+  .section-header .badge{font-size:.7rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary)}
+
+  /* GROUPS GRID */
+  .groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+
+  /* GROUP CARD */
+  .group-card{background:var(--card-bg);backdrop-filter:blur(10px);border:1px solid rgba(107,45,123,.3);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:all .3s ease}
+  .group-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.2)}
+  .group-card-header{padding:16px 18px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .group-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .group-header-info{flex:1;min-width:0}
+  .group-id-row{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:2px}
+  .group-name{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .group-member-sub{font-size:.7rem;color:var(--text-secondary);margin-top:1px}
+
+  /* STATS */
+  .group-stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.04)}
+  .group-stat{padding:12px 14px;background:rgba(0,0,0,.2);text-align:center}
+  .group-stat-value{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--accent);letter-spacing:.5px}
+  .group-stat-value.avg{color:var(--finished)}
+  .group-stat-label{font-size:.62rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+  .avg-note{font-size:.58rem;color:rgba(0,212,170,.7);font-weight:600;margin-top:1px}
+
+  /* MEMBERS */
+  .members-list{padding:8px 10px;flex:1;max-height:270px;overflow-y:auto}
+  .members-list::-webkit-scrollbar{width:4px}
+  .members-list::-webkit-scrollbar-track{background:transparent}
+  .members-list::-webkit-scrollbar-thumb{background:rgba(107,45,123,.5);border-radius:2px}
+  .member-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;transition:background .2s}
+  .member-item:hover{background:rgba(107,45,123,.2)}
+  .cat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .cE{background:#B388FF}.cI{background:#E63946}.cC{background:#FFD23F}
+  .member-name{flex:1;font-size:.8rem;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .member-name.zero{color:var(--secondary)}
+  .member-km-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
+  .bar-track{width:44px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:2px}
+  .km-num{font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:.5px;color:var(--text-secondary);min-width:42px;text-align:right}
+  .km-num.zero{color:var(--secondary)}
+  .done-badge{font-size:.58rem;font-weight:700;letter-spacing:.05em;background:rgba(255,215,0,.15);color:var(--gold);padding:2px 6px;border-radius:4px;border:1px solid rgba(255,215,0,.3)}
+
+  /* PROGRESS */
+  .group-progress{padding:0 18px 14px}
+  .group-progress-header{display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-secondary);margin-bottom:6px}
+  .group-progress-bar{height:6px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden}
+  .group-progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--primary),var(--secondary),var(--accent))}
+
+  /* FOOTER */
+  .group-card-footer{padding:10px 18px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .target-label{font-size:.72rem;color:var(--text-secondary)}
+  .target-label strong{color:var(--accent);font-weight:700}
+  .risk-tag{font-size:.68rem;font-weight:600;color:var(--secondary);background:rgba(230,57,70,.15);border:1px solid rgba(230,57,70,.3);padding:3px 10px;border-radius:20px}
+  .safe-tag{font-size:.68rem;font-weight:600;color:var(--finished);background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.3);padding:3px 10px;border-radius:20px}
+
+  /* PAGE FOOTER */
+  .page-footer{text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid rgba(107,45,123,.3)}
+  .page-footer p{font-size:.85rem;color:var(--text-secondary)}
+  .runner-animation{display:inline-block;animation:run .5s steps(2) infinite}
+  @keyframes run{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+  @media(max-width:900px){.hero-stats{grid-template-columns:repeat(3,1fr)}.groups-grid{grid-template-columns:1fr}}
+  @media(max-width:600px){.hero-stats{grid-template-columns:repeat(2,1fr)}.bonus-banner{padding:20px}.bonus-rules{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bg-animation"></div>
+<div class="grid-overlay"></div>
+<div class="container">
+
+  <header class="header">
+    <div class="header-badge">🏃 Strava Wellness Run 2026 · Week 13</div>
+    <h1>Final Lap<br><span>Virtual Rally</span></h1>
+    <p>March 23–29, 2026 &nbsp;·&nbsp; Manila · Davao · Cebu</p>
+  </header>
+
+  <section class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-value">160</div><div class="hero-stat-label">Athletes</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">11</div><div class="hero-stat-label">Groups</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">65</div><div class="hero-stat-label">Finishers 🏆</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">95</div><div class="hero-stat-label">Still Racing</div></div>
+    <div class="hero-stat"><div class="hero-stat-value">7</div><div class="hero-stat-label">Days · Bonus Validity</div></div>
+  </section>
+
+  <!-- BONUS ROUND -->
+  <div class="bonus-banner">
+    <div class="bonus-tag">⚡ Special Event · Week 13</div>
+    <div class="bonus-title">Bonus Round</div>
+    <div class="bonus-subtitle">One final week. One group challenge. Everyone must move.</div>
+    <div class="bonus-rules">
+      <div class="bonus-rule rule-target">
+        <div class="bonus-rule-icon">🎯</div>
+        <div><h4>Group Target</h4><p>Collective group km during Week 13 must be a <strong>minimum of 150 km</strong> and a <strong>maximum of 300 km.</strong></p></div>
+      </div>
+      <div class="bonus-rule rule-move">
+        <div class="bonus-rule-icon">👣</div>
+        <div><h4>Everyone Moves</h4><p>Every member must log a <strong>minimum of 2 km</strong> during the week. No one sits this out.</p></div>
+      </div>
+      <div class="bonus-rule rule-gift">
+        <div class="bonus-rule-icon">🎁</div>
+        <div><h4>Bonus Tiers</h4>
+          <p>✦ Hit <strong>150 km</strong> → group earns <strong>+50 km bonus</strong></p>
+          <p style="margin-top:5px">✦ Hit <strong>300 km</strong> → group earns <strong>+100 km bonus</strong></p>
+        </div>
+      </div>
+      <div class="bonus-rule rule-move" style="border-color:rgba(179,136,255,.3);background:rgba(179,136,255,.07)">
+        <div class="bonus-rule-icon">📋</div>
+        <div><h4 style="color:#B388FF">Points Distribution</h4><p>The <strong>team leader</strong> submits the bonus km allocation to the committee. The team may hold an <strong>internal discussion</strong> to decide who receives the points.</p></div>
+      </div>
+      <div class="bonus-rule rule-forfeit">
+        <div class="bonus-rule-icon">⚠️</div>
+        <div><h4>Forfeit Rule</h4><p>If <strong>even one member logs less than 2 km</strong> for the week, the entire group forfeits the bonus — no exceptions.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>🏢 The Groups</h2>
+    <div class="line"></div>
+    <div class="badge">11 Teams · 160 Athletes · G1 to G11</div>
+  </div>
+  <div class="groups-grid" id="groupsGrid"></div>
+
+  <div class="page-footer">
+    <p><span class="runner-animation">🏃</span> Strava Wellness Run 2026 · Q1 Wellness Challenge</p>
+    <p style="margin-top:6px">January 1 – March 31, 2026 &nbsp;·&nbsp; Manila · Davao · Cebu &nbsp;·&nbsp; Project CARE</p>
+  </div>
+</div>
+
+<script>
+const RAW = [
+  {id:'G1',name:'Shared Services',icon:'🏢',m:[
+    {n:'Batle, Luzmae Ann',c:'E',km:368.37,g:300},{n:'Belandres, Estella',c:'C',km:20.65,g:50},
+    {n:'Carniyan, Joyce',c:'I',km:78.65,g:100},{n:'Castro, Arnel',c:'E',km:1162.10,g:300},
+    {n:'Dacasin, Jeny Lou',c:'E',km:257.30,g:300},{n:'Enrile, Jer Anthony',c:'E',km:156.88,g:300},
+    {n:'Fabon, Divine',c:'I',km:82.27,g:100},{n:'Guan, Hazel Grace',c:'I',km:240.93,g:100},
+    {n:'Jumao-as, Maria Niña',c:'I',km:21.33,g:100},{n:'Maceda, Kolline',c:'I',km:68.26,g:100},
+    {n:'Medil, Johanson',c:'C',km:12.00,g:50},{n:'Olarte, Xanders',c:'C',km:83.20,g:50},
+    {n:'Parrera, Alexis',c:'I',km:136.50,g:100},{n:'Quimson, Annette',c:'C',km:115.80,g:50},
+    {n:'Rodriguez, Jamaica',c:'I',km:55.41,g:100},{n:'Sorilla, Ibby Joice',c:'E',km:142.70,g:300},
+    {n:'Taleño, Michelle',c:'I',km:109.42,g:100}
+  ]},
+  {id:'G2',name:'Kassatech',icon:'🖥️',m:[
+    {n:'Anglo, Edward',c:'I',km:256.30,g:100},{n:'Manuel, Roderick',c:'E',km:356.40,g:300},
+    {n:'Palaypayon, Erick',c:'E',km:1013.98,g:300},{n:'Pepito, Diane',c:'I',km:115.08,g:100},
+    {n:'Rosauro, Leo Jade',c:'I',km:88.20,g:100},{n:'Sanay, Leonard',c:'I',km:100.13,g:100},
+    {n:'Tapis, Lloyd',c:'E',km:325.82,g:300}
+  ]},
+  {id:'G3',name:'Mfg & Agrid Luzon',icon:'🌾',m:[
+    {n:'Baloca, Jean Paula',c:'E',km:0,g:300},{n:'Bautista, Linette',c:'I',km:19.88,g:100},
+    {n:'Cereno, Shaira',c:'C',km:18.47,g:50},{n:'Gatdula, Khristine Joy',c:'C',km:50.96,g:50},
+    {n:'Golla, James Edward',c:'I',km:60.10,g:100},{n:'Maceda, Lourhen Paul',c:'I',km:19.80,g:100},
+    {n:'Millora, Angelo James',c:'I',km:107.44,g:100},{n:'Ongyaco, Sharmaine',c:'I',km:130.63,g:100},
+    {n:'Ponsica, Mylene',c:'I',km:491.45,g:100},{n:'Torio, Bernadeth',c:'I',km:90.16,g:100},
+    {n:'Ureta, John Mark',c:'E',km:31.18,g:300},{n:'Villanueva, Kent',c:'I',km:129.07,g:100}
+  ]},
+  {id:'G4',name:'Fin / BPO / RE / PM / Acad',icon:'💼',m:[
+    {n:'Abrogar, Angelo',c:'E',km:349.74,g:300},{n:'Celebre, Maryam',c:'E',km:89.77,g:300},
+    {n:'Cristobal, Claire',c:'I',km:440.20,g:100},{n:'Donato, Jamea Venice',c:'I',km:122.80,g:100},
+    {n:'Escosio, Jessa Mae',c:'I',km:164.41,g:100},{n:'Fajardo, Lizzie',c:'I',km:397.94,g:100},
+    {n:'Flores, Casi',c:'C',km:312.47,g:50},{n:'Izon, Allea',c:'C',km:54.88,g:50},
+    {n:'Joson, Marianne',c:'I',km:93.27,g:100},{n:'Mercado, Chrizelyne',c:'I',km:117.27,g:100},
+    {n:'Moneda, Christian',c:'E',km:177.25,g:300},{n:'Navarro, Kim Andrew',c:'E',km:154.94,g:300},
+    {n:'Perdon, Morris Raymond',c:'I',km:458.01,g:100},{n:'Salandanan, Anne Jeline',c:'E',km:1013.50,g:300},
+    {n:'Sarol, Jasper Ronnie',c:'I',km:47.10,g:100},{n:'Villanueva, Novie Alfred',c:'C',km:100.59,g:50}
+  ]},
+  {id:'G5',name:'Mindanao 1 & 2',icon:'🌴',m:[
+    {n:'Aderes, Angelo',c:'I',km:49.89,g:100},{n:'Anicoy, Jeffrey',c:'I',km:0,g:100},
+    {n:'Antalan, Christine Joy',c:'E',km:28.38,g:300},{n:'Catienza, Daniel',c:'E',km:110.40,g:300},
+    {n:'De Guia, Julia Rovie',c:'I',km:81.09,g:100},{n:'Funtilar, Maria Angelica',c:'E',km:328.79,g:300},
+    {n:'Lamanilao, Rasyl Mae',c:'E',km:306.54,g:300},{n:'Medrina, Cherry',c:'I',km:63.36,g:100},
+    {n:'Pagobo, Chinley Jane',c:'I',km:94.70,g:100},{n:'Pastor, Duke Ian',c:'I',km:99.42,g:100},
+    {n:'Peticaros, Aiza Joyce',c:'E',km:130.30,g:300},{n:'Quisol, Ara',c:'E',km:46.07,g:300},
+    {n:'Santillan, Maria Shel',c:'I',km:99.27,g:100},{n:'Teves, Glazel Mei Anne',c:'I',km:115.51,g:100},
+    {n:'Villegas, Edouard',c:'I',km:19.00,g:100}
+  ]},
+  {id:'G6',name:'R&D',icon:'🔬',m:[
+    {n:'Arante, Renato',c:'E',km:187.93,g:300},{n:'Caparoso, Alyssa',c:'C',km:31.20,g:50},
+    {n:'Clara, Alfredo Jr.',c:'E',km:230.80,g:300},{n:'Daitol, Charles',c:'E',km:442.00,g:300},
+    {n:'Dulhao, Dulce Rose',c:'C',km:88.41,g:50},{n:'Gellica, Jhonlloyd',c:'I',km:20.22,g:100},
+    {n:'Letigio, Marjorie',c:'I',km:71.65,g:100},{n:'Llido, Nica Andrea',c:'E',km:132.89,g:300},
+    {n:'Milana, Ryah Anne',c:'I',km:116.70,g:100},{n:'Mullet, John Michael',c:'E',km:147.60,g:300},
+    {n:'Pelongo, Rhenalyn',c:'I',km:84.70,g:100},{n:'Penafiel, Mae Anne',c:'E',km:194.07,g:300},
+    {n:'Remerata, Mickhel Davee',c:'E',km:312.50,g:300},{n:'Salcedo, Chanda',c:'I',km:51.72,g:100},
+    {n:'Sibal, Raye Vanne',c:'C',km:58.72,g:50},{n:'Sorima, Reno Roy',c:'E',km:261.93,g:300},
+    {n:'Subillaga, Ephraim Nick',c:'I',km:83.81,g:100},{n:'Vivas, Nica Angela',c:'C',km:53.54,g:50}
+  ]},
+  {id:'G7',name:'Acceltech',icon:'🚀',m:[
+    {n:'Bulahan, Maybelle',c:'C',km:23.71,g:50},{n:'Canlas, Ellaine',c:'I',km:88.91,g:100},
+    {n:'Echague, Ellyn',c:'I',km:0,g:100},{n:'Espino, Remina',c:'C',km:25.79,g:50},
+    {n:'Gomez, Jonah',c:'I',km:196.80,g:100},{n:'Graycochea, Shaira Shane',c:'C',km:31.09,g:50},
+    {n:'Interno, Gio Yves',c:'I',km:71.01,g:100},{n:'Madrazo, Evanie',c:'I',km:8.61,g:100},
+    {n:'Manalo, Juan Karlo',c:'I',km:52.12,g:100},{n:'Moll, Mario Eduardo',c:'I',km:56.60,g:100},
+    {n:'Padada, Leonard',c:'I',km:171.30,g:100},{n:'Padin, Japhet',c:'I',km:117.30,g:100},
+    {n:'Palad, Jonelle',c:'C',km:25.13,g:50},{n:'Pineda, Joana Marie',c:'C',km:15.99,g:50},
+    {n:'Ramos, Allana Gilda',c:'C',km:61.10,g:50},{n:'Regis, Michael Juanito',c:'E',km:357.00,g:300},
+    {n:'Ruiz, Diana',c:'C',km:15.03,g:50},{n:'Suaking, Elyza',c:'C',km:33.86,g:50},
+    {n:'Subido, Kristine',c:'C',km:57.18,g:50},{n:'Tarrobago-Moll, Ivy',c:'C',km:45.29,g:50},
+    {n:'Ventura, Giussepp',c:'E',km:643.72,g:300},{n:'Villasin, Jhan Vincent',c:'I',km:167.67,g:100}
+  ]},
+  {id:'G8',name:'Visayas 1 & 2',icon:'🏝️',m:[
+    {n:'Aguason, Krissel John',c:'E',km:380.08,g:300},{n:'Albarico, Jasmine Fate',c:'I',km:59.57,g:100},
+    {n:'Andrade, Aron Keith',c:'E',km:372.36,g:300},{n:'Cueva, Lilian',c:'I',km:138.50,g:100},
+    {n:'De Vera, Lyn',c:'I',km:271.40,g:100},{n:'Diaz, Antonio Jr',c:'E',km:342.10,g:300},
+    {n:'Dico, Marjorie',c:'I',km:89.50,g:100},{n:'Gloria, Karmela Leanne',c:'I',km:67.40,g:100},
+    {n:'Mahipos, Jemima',c:'I',km:112.71,g:100},{n:'Morquida, Annaleah',c:'I',km:87.05,g:100},
+    {n:'Patong, Chris',c:'I',km:84.82,g:100}
+  ]},
+  {id:'G9',name:'Tech Services 1',icon:'⚙️',m:[
+    {n:'Arzaga, Charlie',c:'E',km:446.63,g:300},{n:'Dacara, Noel',c:'E',km:223.14,g:300},
+    {n:'Dano, Charlie Magne',c:'E',km:118.54,g:300},{n:'Dasalla, Cris Eric Jr.',c:'C',km:6.05,g:50},
+    {n:'David, Kurt Dade',c:'C',km:3.98,g:50},{n:'Dela Cueva, Gabriel',c:'C',km:0,g:50},
+    {n:'Duarte, Nelmark Jhon',c:'I',km:0,g:100},{n:'Hinuguin, Ainee Joy',c:'I',km:79.90,g:100},
+    {n:'Inayawan, Mary Grace',c:'I',km:15.51,g:100},{n:'Marte, Genelito',c:'E',km:11.08,g:300},
+    {n:'Mijares, Rey Mart',c:'I',km:106.18,g:100},{n:'Padasay, Jhan Rodeen',c:'I',km:108.46,g:100},
+    {n:'Palpal-latoc, Angelo',c:'I',km:97.17,g:100},{n:'Prajes, John Peter',c:'I',km:56.70,g:100},
+    {n:'Sales, Lendon',c:'E',km:153.62,g:300},{n:'Sison, Alexis John',c:'E',km:90.10,g:300},
+    {n:'Sumargo, Vencient',c:'E',km:10.15,g:300},{n:'Torres, Alfonso',c:'I',km:118.99,g:100},
+    {n:'Valdevieso, Jessa',c:'E',km:126.32,g:300},{n:'Villame, Joshua',c:'E',km:236.99,g:300},
+    {n:'Visande, Joshua',c:'E',km:318.95,g:300}
+  ]},
+  {id:'G10',name:'Tech Services 2',icon:'💻',m:[
+    {n:'Alicer, King Walter',c:'E',km:269.32,g:300},{n:'Alonzo, Ritz',c:'C',km:3.78,g:50},
+    {n:'Aque, Arbill',c:'I',km:139.70,g:100},{n:'Arreza, Jess Clarence',c:'E',km:185.49,g:300},
+    {n:'Bacalso, Liel',c:'I',km:72.59,g:100},{n:'Basuel, Adrianne John',c:'I',km:55.54,g:100},
+    {n:'Escudero, Schyrien',c:'E',km:67.10,g:300},{n:'Gotera, Ulyses Gerald',c:'E',km:193.50,g:300},
+    {n:'Hubahib, Mariel',c:'I',km:125.97,g:100},{n:'Laud, Elisha Janniah',c:'I',km:68.05,g:100},
+    {n:'Lucas, Senen',c:'E',km:287.68,g:300},{n:'Marzo, Teilhard Theo',c:'E',km:91.60,g:300},
+    {n:'Ramos, John Sedric',c:'I',km:115.80,g:100},{n:'Salen, Wilbert',c:'I',km:0,g:100},
+    {n:'Samson, Russell',c:'E',km:315.51,g:300},{n:'Serdan, Ryan',c:'E',km:28.30,g:300},
+    {n:'Tizon, Princess Nicole',c:'I',km:141.70,g:100},{n:'Turin, Jessie Rom',c:'I',km:109.09,g:100},
+    {n:'Valencia, John Vincent',c:'I',km:134.21,g:100},{n:'Vios, Kurt Jason',c:'C',km:4.89,g:50}
+  ]},
+  {id:'G11',name:'Execom',icon:'⭐',m:[
+    {n:'Zambale, Mary Ann',c:'I',km:123.65,g:100}
+  ]}
+];
+
+const BC = {E:'#B388FF',I:'#E63946',C:'#FFD23F'};
+function sn(n){const p=n.split(',');return p.length>=2?`${p[1].trim().split(' ')[0]} ${p[0].trim()}`:n}
+
+const GROUPS = RAW.map(g=>{
+  const total=g.m.reduce((s,m)=>s+m.km,0);
+  return {...g,total,avg:total/g.m.length};
+});
+
+function card(g,rank){
+  const zeros=g.m.filter(m=>m.km===0);
+  const fins=g.m.filter(m=>m.km>=m.g).length;
+  const goalTotal=g.m.reduce((s,m)=>s+m.g,0);
+  const pct=Math.min(100,(g.total/goalTotal)*100);
+  const rl=rank<=3?['🥇','🥈','🥉'][rank-1]:`#${rank}`;
+  const mHtml=g.m.slice().sort((a,b)=>{
+    const aDone=a.km>=a.g, bDone=b.km>=b.g;
+    if(aDone&&!bDone) return -1;
+    if(!aDone&&bDone) return 1;
+    return b.km-a.km;
+  }).map(m=>{
+    const p=Math.min(100,(m.km/m.g)*100);
+    const done=m.km>=m.g, zero=m.km===0;
+    return `<div class="member-item">
+      <span class="cat-dot c${m.c}"></span>
+      <span class="member-name${zero?' zero':''}">${sn(m.n)}</span>
+      <div class="member-km-wrap">
+        ${done?`<span class="done-badge">✓ DONE</span>`:`<div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${zero?'#E63946':BC[m.c]}"></div></div>`}
+        <span class="km-num${zero?' zero':''}">${m.km.toFixed(1)}</span>
+      </div></div>`;
+  }).join('');
+  const flag=zeros.length?`<span class="risk-tag">⚠ ${zeros.length} at 0 km — bonus at risk</span>`:`<span class="safe-tag">✓ All members active</span>`;
+  return `<div class="group-card">
+    <div class="group-card-header">
+      <div class="group-icon">${g.icon}</div>
+      <div class="group-header-info">
+        <div class="group-id-row">${g.id}</div>
+        <div class="group-name">${g.name}</div>
+        <div class="group-member-sub">${g.m.length} members &nbsp;·&nbsp; ${fins} personal finishers</div>
+      </div>
+    </div>
+    <div class="group-stats">
+      <div class="group-stat">
+        <div class="group-stat-value">${Math.round(g.total).toLocaleString()}</div>
+        <div class="group-stat-label">Total KM</div>
+      </div>
+      <div class="group-stat">
+        <div class="group-stat-value avg">${g.avg.toFixed(1)}</div>
+        <div class="group-stat-label">Avg KM / Runner</div>
+        <div class="avg-note">★ group ranking metric</div>
+      </div>
+      <div class="group-stat">
+        <div class="group-stat-value">${g.m.length}</div>
+        <div class="group-stat-label">Runners</div>
+      </div>
+      <div class="group-stat">
+        <div class="group-stat-value">${fins}</div>
+        <div class="group-stat-label">Finishers</div>
+      </div>
+    </div>
+    <div class="members-list">${mHtml}</div>
+    <div class="group-progress">
+      <div class="group-progress-header"><span>Overall goal progress</span><span>${pct.toFixed(1)}%</span></div>
+      <div class="group-progress-bar"><div class="group-progress-fill" style="width:${Math.min(100,pct)}%"></div></div>
+    </div>
+  </div>`;
+}
+
+document.getElementById('groupsGrid').innerHTML=GROUPS.map((g,i)=>card(g,i+1)).join('');
+</script>
+</body>
+</html>
